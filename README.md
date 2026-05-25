@@ -72,6 +72,21 @@ GitHub → POST /github/webhook → verify signature
 - Extend `TriageDecision` with `assignee_id` to auto-assign Linear tickets
 - Add `label_ids` mapping in `create_linear_ticket()` to set Linear labels
 
+## Health Check
+
+Confirm the server is up before pointing your GitHub webhook at it:
+
+```bash
+curl http://localhost:8001/health
+```
+
+Expected response:
+```json
+{"status": "ok"}
+```
+
+GitHub sends a `ping` event immediately after you save the webhook. If the server isn't responding, the webhook will show a red ✗ in the repo settings and no issues will be triaged until it passes.
+
 ## Requirements
 
 - Python 3.11+
