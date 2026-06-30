@@ -1,3 +1,5 @@
+> **Commercial status:** Deferred commercial product. This repository may be useful as a code reference, but the product is not the active flagship and should not be promoted until its package, README, and listing are re-verified.
+
 # GitHub Issue → LLM Triage → Linear (pydantic-ai + FastAPI)
 
 Automatically triages GitHub issues into Linear tickets. Uses `pydantic-ai` to classify each issue, assign priority, estimate story points, and route to the correct team — all without human intervention.
