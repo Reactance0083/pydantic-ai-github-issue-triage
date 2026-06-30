@@ -1,4 +1,9 @@
-> **Commercial status:** Deferred commercial product. This repository may be useful as a code reference, but the product is not the active flagship and should not be promoted until its package, README, and listing are re-verified.
+> **Commercial status:** Deferred code reference. This repository is not the current flagship and should not be promoted as commercially ready until its package, listing, README, and download flow are re-verified.
+
+
+## Current Status
+
+This repository is a deferred code reference, not the current Stage 1 flagship. It may be useful for learning, but it should not be promoted as commercially ready until its package, listing, README, and download flow are re-verified.
 
 # GitHub Issue → LLM Triage → Linear (pydantic-ai + FastAPI)
 
@@ -91,7 +96,7 @@ All 5 templates are available individually or as a **$39 bundle** (saves $15 vs 
 |----------|-------|------|
 | Slack → Notion Automation | $9 | [Buy on Gumroad](https://reactance0083.gumroad.com/l/cdonwt) |
 | GitHub Issue → Linear Triage | $9 | [Buy on Gumroad](https://reactance0083.gumroad.com/l/axgwj) |
-| Multi-LLM Cost Optimizer | $12 | [Buy on Gumroad](https://reactance0083.gumroad.com/l/ztmlv) |
+| Multi-LLM Cost Optimizer | $29 only for the verified Multi-LLM flagship | [Buy on Gumroad](https://reactance0083.gumroad.com/l/ztmlv) |
 | Web Scraper + Semantic Search | $9 | [Buy on Gumroad](https://reactance0083.gumroad.com/l/esjukw) |
 | Prompt Engineering Runbook | $15 | [Buy on Gumroad](https://reactance0083.gumroad.com/l/mdsbpc) |
 | **Complete Bundle (all 5)** | **$39** | [Buy on Gumroad](https://reactance0083.gumroad.com/l/pydantic-ai-fastapi-bundle) |
