@@ -1,89 +1,44 @@
-> **Commercial status:** Deferred code reference. This repository is not the current flagship and should not be promoted as commercially ready until its package, listing, README, and download flow are re-verified.
+# GitHub Issue Triage to Linear
 
+A FastAPI integration reference that turns new GitHub issues into typed classification and Linear handoffs.
 
-## Current Status
+**[Portfolio](https://github.com/Reactance0083)** · **Status: implementation reference; live integration not revalidated in this refresh**
 
-This repository is a deferred code reference, not the current Stage 1 flagship. It may be useful for learning, but it should not be promoted as commercially ready until its package, listing, README, and download flow are re-verified.
+## Implemented flow
 
-# GitHub Issue → LLM Triage → Linear (pydantic-ai + FastAPI)
+1. Receive `POST /github/webhook` and verify the HMAC signature.
+2. Select newly opened issues.
+3. Classify the issue using a PydanticAI agent.
+4. Create a Linear issue in the configured team when the model requests it.
+5. Attempt a GitHub comment with the Linear link.
 
-Automatically triages GitHub issues into Linear tickets. Uses `pydantic-ai` to classify each issue, assign priority, estimate story points, and route to the correct team — all without human intervention.
+The model returns title, priority, label, team area, estimate, summary, and a create/skip decision. **The team is configured with `LINEAR_TEAM_ID`; the predicted area and label are written into the description rather than applied as team routing or Linear labels.**
 
-## What It Does
-
-1. Receives GitHub Issues webhook events
-2. Verifies HMAC-SHA256 signature
-3. Classifies the issue with `claude-haiku-4-5` via pydantic-ai
-4. If worth creating → creates a Linear ticket with priority, estimate, and area tag
-5. Comments on the GitHub issue with a link to the Linear ticket
-
-## Quick Start
+## Setup
 
 ```bash
-pip install -r requirements.txt
-cp .env.example .env
-# Fill in .env with your credentials
-uvicorn main:app --reload --port 8001
+python -m venv .venv
+# Activate the environment for your shell.
+python -m pip install -r requirements.txt
+# Copy .env.example to .env and configure the variables below.
+python -m uvicorn main:app --host 127.0.0.1 --port 8001
 ```
 
-Expose with ngrok, then configure in GitHub:
-```
-Repo → Settings → Webhooks → Add webhook
-  Payload URL: https://YOUR_NGROK_URL/github/webhook
-  Content type: application/json
-  Secret: (set this as GITHUB_WEBHOOK_SECRET in .env)
-  Events: Issues only
-```
+The application is in `main.py`. Configure `GITHUB_WEBHOOK_SECRET`, `LINEAR_API_KEY`, `LINEAR_TEAM_ID`, and `ANTHROPIC_API_KEY`. Posting comments additionally requires a suitable `GITHUB_TOKEN`.
 
-## Structured Output (pydantic-ai)
+Use a test GitHub repository and Linear team for live verification. Receiving an eligible event can create an issue and comment.
 
-```python
-class TriageDecision(BaseModel):
-    should_create_ticket: bool
-    title: str           # clean 5-10 word ticket title
-    priority: int        # 1=urgent 2=high 3=medium 4=low
-    label: str           # bug | feature | improvement | docs | question
-    team_area: str       # frontend | backend | infra | data | mobile
-    estimate: int        # story points: 1 2 3 5 8 13
-    summary: str         # 2-3 sentence description for the Linear ticket
-```
+## What to inspect
 
-## Priority Mapping
+- `TriageDecision`: structured model output.
+- `verify_github_signature`: signed-event validation.
+- `process_issue`: model decision and handoff.
+- `create_linear_ticket`: GraphQL integration and source traceability.
 
-| Linear Priority | When |
-|----------------|------|
-| 1 — Urgent | Production outage, data loss |
-| 2 — High | Bug affecting many users, release blocker |
-| 3 — Medium | Feature request with clear value |
-| 4 — Low | Minor improvement, typo, nice-to-have |
+## Limits
 
-## What Gets Skipped
+The source has no durable queue, event deduplication, reviewer approval step, or independently validated classification accuracy. Current provider compatibility needs verification; the PydanticAI calls use `result_type` and `result.data`.
 
-- Duplicates (LLM detects similar existing issues)
-- Vague bug reports missing reproduction steps
-- Questions that belong in GitHub Discussions
-- Spam / test issues
+GraphQL application-level errors, missing returned issue URLs, GitHub comment responses, and prompt-injection handling need hardening before production use. A model's duplicate/spam assessment is not a deterministic duplicate detector.
 
-## Architecture
-
-```
-GitHub → POST /github/webhook → verify signature
-          → triage (pydantic-ai, async background task)
-          → create_linear_ticket() via GraphQL
-          → comment on GitHub issue with Linear URL
-```
-
-## Customization
-
-- Add `GITHUB_TOKEN` to `.env` to enable the auto-comment feature
-- Extend `TriageDecision` with `assignee_id` to auto-assign Linear tickets
-- Add `label_ids` mapping in `create_linear_ticket()` to set Linear labels
-
-## Requirements
-
-- Python 3.11+
-- GitHub repo with webhook permissions
-- Linear workspace with API access
-- Anthropic API key (uses claude-haiku-4-5, ~$0.001/100 issues)
-
----
+Developed with AI assistance. Documentation reviewed against source on November 10, 2026.
