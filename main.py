@@ -1,10 +1,7 @@
 """
-GitHub Issue → LLM Triage → Linear Scaffold
-Receives GitHub webhook events, classifies each issue with pydantic-ai,
-and automatically creates Linear tickets with priority, team assignment, and labels.
-
-Setup: expose with ngrok (dev) or any server, paste URL into GitHub repo
-Settings → Webhooks. Select "Issues" events.
+GitHub Issue Triage to Linear.
+Signed webhooks, typed classification, and issue creation in one configured team.
+Predicted area and label are descriptive metadata. See README for current limits.
 """
 import hashlib, hmac, os
 from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
