@@ -39,7 +39,7 @@ class TriageDecision(BaseModel):
 # ── pydantic-ai classifier ────────────────────────────────────────────────────
 classifier = Agent(
     "anthropic:claude-haiku-4-5",
-    result_type=TriageDecision,
+    output_type=TriageDecision,
     system_prompt=(
         "You are a senior engineering manager triaging GitHub issues into Linear tickets. "
         "Assign priority 1 (urgent) only for production outages or data loss. "
@@ -47,7 +47,7 @@ classifier = Agent(
         "Assign priority 3 (medium) for feature requests with clear business value. "
         "Assign priority 4 (low) for minor improvements, typos, and nice-to-haves. "
         "Skip: duplicate issues, questions that belong in discussions, vague issues missing reproduction steps. "
-        "Estimate story points honestly — 1=trivial fix, 13=multi-week effort. "
+        "Estimate story points honestly : 1=trivial fix, 13=multi-week effort. "
         "Write the summary as if briefing an engineer picking up the ticket cold."
     ),
 )
@@ -141,7 +141,7 @@ async def github_webhook(request: Request, background: BackgroundTasks):
 
 async def process_issue(issue: dict):
     title  = issue.get("title", "").strip()
-    body   = issue.get("body", "").strip() or "(no description)"
+    body   = (issue.get("body") or "").strip() or "(no description)"
     url    = issue.get("html_url", "")
     number = issue.get("number", 0)
     labels = [lbl["name"] for lbl in issue.get("labels", [])]
@@ -153,7 +153,7 @@ async def process_issue(issue: dict):
     )
 
     result   = await classifier.run(prompt)
-    decision = result.data
+    decision = result.output
 
     if not decision.should_create_ticket:
         return
@@ -190,3 +190,4 @@ def health():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001, reload=True)
+

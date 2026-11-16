@@ -2,7 +2,7 @@
 
 A FastAPI integration reference that turns new GitHub issues into typed classification and Linear handoffs.
 
-**[Portfolio](https://github.com/Reactance0083)** · **Status: implementation reference; live integration not revalidated in this refresh**
+**[Portfolio](https://github.com/Reactance0083)** · **Status: integration prototype; offline regression checks passed November 16, 2026**
 
 ## Implemented flow
 
@@ -35,10 +35,15 @@ Use a test GitHub repository and Linear team for live verification. Receiving an
 - `process_issue`: model decision and handoff.
 - `create_linear_ticket`: GraphQL integration and source traceability.
 
+## Offline checks
+
+Run `python -m unittest test_workflow -v`. The tests cover signature acceptance/rejection, issues with no description, the typed create/skip decision, and mocked Linear/GitHub handoffs. They use PydanticAI's test model and mocked HTTP responses, and send no real messages or tickets. They do not measure model accuracy or prove a live deployment.
+
 ## Limits
 
-The source has no durable queue, event deduplication, reviewer approval step, or independently validated classification accuracy. Current provider compatibility needs verification; the PydanticAI calls use `result_type` and `result.data`.
+The source has no durable queue, event deduplication, reviewer approval step, or independently validated classification accuracy. PydanticAI calls use `output_type` and `result.output`. The dependency file pins the tested PydanticAI and Anthropic SDK versions. Live provider and service behavior still require end-to-end verification.
 
 GraphQL application-level errors, missing returned issue URLs, GitHub comment responses, and prompt-injection handling need hardening before production use. A model's duplicate/spam assessment is not a deterministic duplicate detector.
 
-Developed with AI assistance. Documentation reviewed against source on November 10, 2026.
+Developed with AI assistance. Documentation reviewed against source on November 16, 2026.
+
